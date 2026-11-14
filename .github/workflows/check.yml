@@ -1,0 +1,60 @@
+name: check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: JavaScript syntax
+        run: |
+          node --check index.js
+          node --check client.js
+
+      - name: JSON files
+        run: |
+          node -e "JSON.parse(require('fs').readFileSync('package.json','utf8'))"
+          node -e "for (const f of ['locale/en.json','locale/ru.json']) JSON.parse(require('fs').readFileSync(f,'utf8'))"
+
+      - name: Bundle manifest sanity
+        run: |
+          node --input-type=module -e "
+            import { readFileSync } from 'node:fs';
+            const patch = readFileSync('cordis.patch.yml', 'utf8');
+            const pkg = JSON.parse(readFileSync('package.json', 'utf8'));
+            const must = ['preset-kotlin-android', 'kotlin-android-panel'];
+            for (const key of must) {
+              if (!patch.includes(key)) throw new Error('cordis.patch.yml is missing ' + key);
+            }
+            if (pkg.dsh?.bundle?.patch !== './cordis.patch.yml') throw new Error('dsh.bundle.patch must point at ./cordis.patch.yml');
+            if (!pkg.dsh?.client) throw new Error('dsh.client is required for the sidebar panel');
+            console.log('manifest ok');
+          "
+
+      - name: Locale key parity
+        run: |
+          node --input-type=module -e "
+            import { readFileSync } from 'node:fs';
+            const load = (p) => JSON.parse(readFileSync(p, 'utf8'));
+            for (const lang of ['en', 'ru']) {
+              const meta = load('locale/' + lang + '.json').meta;
+              for (const key of ['title', 'description']) {
+                if (typeof meta?.[key] !== 'string' || !meta[key].trim()) {
+                  throw new Error('locale/' + lang + '.json: meta.' + key + ' is missing');
+                }
+              }
+            }
+            console.log('locales ok');
+          "
