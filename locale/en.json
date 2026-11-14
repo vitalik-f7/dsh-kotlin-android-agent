@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Kotlin Android agent and panel",
+    "description": "Kotlin/Android agent preset for Android Studio projects plus a panel at the left sidebar foot with its token profile and the self-improvement journal switch."
+  }
+}

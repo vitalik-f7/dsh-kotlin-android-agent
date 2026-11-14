@@ -1,0 +1,24 @@
+# OS / editor noise
+Thumbs.db
+desktop.ini
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Node
+node_modules/
+npm-debug.log*
+pnpm-debug.log*
+yarn-error.log*
+
+# Local DSH artifacts
+.dsh/
+*.local.*
+*.bak
+*.bak-*
+
+# Secrets — never commit a token
+github-token.txt
+.env
+.env.*

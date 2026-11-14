@@ -1,0 +1,58 @@
+{
+  "name": "@local/dsh-kotlin-android-agent",
+  "version": "1.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Kotlin/Android agent preset for DeepSeek Harness plus a Kotlin panel entry at the left sidebar foot",
+  "license": "MIT",
+  "author": "Drakin7",
+  "homepage": "https://github.com/vitalik-f7/dsh-kotlin-android-agent#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vitalik-f7/dsh-kotlin-android-agent.git"
+  },
+  "bugs": {
+    "url": "https://github.com/vitalik-f7/dsh-kotlin-android-agent/issues"
+  },
+  "keywords": [
+    "dsh",
+    "dsh-bundle",
+    "deepseek-harness",
+    "agent-preset",
+    "kotlin",
+    "android",
+    "android-studio",
+    "gradle"
+  ],
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js",
+    "./icon": "./icon.svg",
+    "./locale/*.json": "./locale/*.json"
+  },
+  "files": [
+    "index.js",
+    "client.js",
+    "cordis.patch.yml",
+    "icon.svg",
+    "locale/*.json",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "check": "node --check index.js && node --check client.js && node -e \"JSON.parse(require('fs').readFileSync('package.json','utf8'));for(const f of ['locale/en.json','locale/ru.json'])JSON.parse(require('fs').readFileSync(f,'utf8'));console.log('ok')\""
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": [
+        "@deepseek-ai/dsh-client-locale"
+      ]
+    }
+  }
+}
